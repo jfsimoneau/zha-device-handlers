@@ -20,22 +20,11 @@ from zigpy.quirks.v2.homeassistant import (
     UnitOfEnergy,
     UnitOfPower,
     UnitOfTemperature,
+    UnitOfTime,
 )
 import zigpy.types as t
 from zigpy.zcl.clusters.hvac import Thermostat
 from zigpy.zcl.foundation import ZCLAttributeDef
-
-# ──────────────────────────────────────────────────────────────
-# Named values
-# ──────────────────────────────────────────────────────────────
-
-
-class PeakDemandEventIcon(t.enum16):
-    """Peak demand event icon values."""
-
-    OFF = 0x0000
-    ON = 0x6270
-
 
 # ──────────────────────────────────────────────────────────────
 # Custom Thermostat cluster
@@ -129,15 +118,17 @@ class AlliaThermostatCluster(Thermostat, CustomCluster):
         translation_key="outdoor_temperature",
         fallback_name="Outdoor temperature",
     )
-    # Peak demand event icon
-    .enum(
+    # Peak demand event icon display time
+    .number(
         attribute_name=AlliaThermostatCluster.AttributeDefs.peak_demand_event_icon.name,
-        enum_class=PeakDemandEventIcon,
         cluster_id=AlliaThermostatCluster.cluster_id,
         endpoint_id=25,
+        min_value=0,
+        max_value=64800,
+        unit=UnitOfTime.SECONDS,
         entity_type=EntityType.CONFIG,
         translation_key="peak_demand_event_icon",
-        fallback_name="Peak Demand Event",
+        fallback_name="Peak demand event display time",
     )
     .add_to_registry()
 )
